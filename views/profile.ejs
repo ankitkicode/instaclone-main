@@ -1,0 +1,90 @@
+<% include ./partials/header.ejs %>
+  <div class="w-full min-h-screen bg-zinc-900 text-white py-5">
+      <div class="nav flex justify-between items-center px-4">
+        <h3 class="text-lg"><%= user.username %></h3>
+        <div class="icons flex gap-5">
+          <a href="/upload"><i class="text-[1.4rem] ri-add-box-line"></i></a>
+          <a href="/logout"><i  class="text-[1.4rem] ri-logout-box-r-line cursor-pointer"></i></a>
+        </div>
+      </div>
+      <div class="flex justify-between items-center pl-6 pr-[12vw] mt-8">
+        <div class="w-[19vw] h-[19vw] bg-sky-100 rounded-full overflow-hidden">
+          <img src="/images/uploads/<%= user.profilePicture %>" alt="">
+        </div>
+        <div class="stats flex gap-3 items-center justify-between">
+          <div class="flex flex-col items-center justify-center">
+            <h3><%= user.posts.length %></h3>
+            <h4>Posts</h4>
+          </div>
+          <div class="flex flex-col items-center justify-center">
+            <h3><%= user.followers.length %></h3>
+            <h4>followers</h4>
+          </div>
+          <div class="flex flex-col items-center justify-center">
+            <h3><%= user.following.length %></h3>
+            <h4>following</h4>
+          </div>
+        </div>
+      </div>
+      <div class="dets px-6 mt-5">
+        <div class="flex  justify-between items-start">
+          <div>
+
+            <h3 class="text-lg mb-1"><%= user.name %></h3>
+            <p class="text-xs tracking-tight pr-5 opacity-50"><%= user.bio %> </p>
+          </div>
+          <div class="flex gap-3 py-3"> 
+            <button class="followButton px-5 py-2 bg-violet-700 text-xs rounded-md" data-user-follows-logged="<%= userFollowsLoggedUser ? 'true' : 'false' %>" onclick="toggleFollow('<%= user._id %>')">
+              <%= userFollowsLoggedUser ? 'Unfollow' : 'Follow' %>
+            </button>
+            
+            <a class="px-3 py-2 bg-zinc-800 text-xs rounded-md" href="#">Message</a>
+          </div>
+        </div>
+      </div>
+      <div class="px-6 mt-5">
+        <a class="px-3 py-2 bg-zinc-800 text-xs rounded-md" href="/edit">Edit Profile</a>
+      </div>
+      <div class="posts w-full flex justify-between gap-1 py-2 mt-5 flex-wrap">
+        <% user.posts.reverse().forEach(function(post){ %>
+    
+          <div class="post w-[32.5%] h-32 bg-sky-100">
+            <a href="/profile/<%= user.username %>/posts">
+              <img style="height: 100%; width: 100%; object-fit: cover; object-position: center;" src="/images/uploads/<%= post.imageUrl %>" alt="">
+            </a>
+          </div>
+
+       <% }) %>
+      </div>
+  </div>
+   <script>
+// external-script.js
+const followButtons = document.querySelectorAll('.followButton');
+
+followButtons.forEach((button) => {
+  const isUserFollowing = button.dataset.userFollowsLogged === 'true';
+
+  // Set the initial button text based on the follow status
+  button.innerText = isUserFollowing ? 'Unfollow' : 'Follow';
+});
+
+async function toggleFollow(userId) {
+  try {
+    const response = await fetch(`/api/togglefollow/${userId}`, { method: 'POST' });
+    const data = await response.json();
+
+    if (data.success) {
+      // Toggle button text on success
+      followButtons.forEach((button) => {
+        button.innerText = data.isFollowing ? 'Unfollow' : 'Follow';
+      });
+    } else {
+      console.error('Failed to toggle follow status');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+  </script>
+<% include ./partials/footer.ejs %>

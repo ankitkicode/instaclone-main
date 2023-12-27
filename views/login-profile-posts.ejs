@@ -1,0 +1,86 @@
+<% include ./partials/header.ejs %>
+  <div class="w-full min-h-screen bg-zinc-900 text-white py-5">
+    <div class="flex justify-between items-center px-4">
+        <a class="text-sm text-blue-500" href="/profile"><i class="ri-arrow-left-s-line"></i> profile</a>
+        <h2 class="leading-none text-sm">All Posts</h2>
+        <a class="text-sm" href="/feed"><i class="ri-home-line"></i> home</a>
+      </div>
+    <div class="posts mb-20">
+      <% allPost.posts.reverse().forEach(function(post){ %>
+        <div class="post mt-10 w-full min-h-[50vh]">
+          <div class="title px-4 flex items-center gap-2">
+            <div class="w-[8vw] h-[8vw] bg-sky-100 rounded-full overflow-hidden">
+              <img src="/images/uploads/<%= user.profilePicture %>" alt="">
+            </div>
+            <h4 class="text-sm"><%= user.username %></h4>
+            <h6 class="text-xs opacity-30"> <%= calculateTimeDifference(post.createdAt) %> hours ago </h6>
+            <a href="/api/deletepost/<%= post._id %>"><i class="ri-delete-bin-6-line ml-20"></i></a>
+          </div>
+          <div class="w-full h-96 mt-4 bg-sky-100">
+            <img class="w-full h-96 object-cover object-cover object-center" src="/images/uploads/<%=post.imageUrl %>" alt="">
+          </div>
+          <div class="options w-full px-4 flex justify-between items-center text-[1.4rem]">
+            <div class="flex gap-3 mt-2">
+             <button
+              class="like-button"
+              data-post-id="<%= post._id %>"
+              data-is-liked="<%=post.likes.includes(post._id) %>"
+              onclick="toggleLike(this)">
+              <i class="ri-heart-line"><br> </i> <!-- Outline heart icon -->
+            </button>
+              <i class="ri-chat-3-line"></i>
+              <i class="ri-share-circle-line"></i>
+            </div>
+            <i class="ri-bookmark-line"></i>
+          </div>
+          <h3 id="like-count" class="px-4 mt-2 text-sm leading-none tracking-tight"><%= post.likes.length %> Likes</h3>
+          <h2 class="text-white font-light text-sm mt-2"><span class="font-semibold pl-4 pr-2"><%= post.user.username %></span>some
+            <%= post.content %></h2>
+        </div>
+    <% }) %>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js" integrity="sha512-b94Z6431JyXY14iSXwgzeZurHHRNkLt9d6bAHt7BZT38eqV+GyngIi/tVye4jBKPYQ2lBdRs0glww4fmpuLRwA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+           //likes logic here!!
+    //likes logic here!!
+function toggleLike(button) {
+  const postId = button.dataset.postId;
+  console.log("clicked" + postId);
+  const isLiked = button.dataset.isLiked === 'true';
+
+  axios.post(`/api/togglelike/${postId}`)
+    .then(response => {
+      if (response.data.success) {
+        const likeCountSpan = button.closest('.post').querySelector('#like-count');
+        const likeIcon = button.querySelector('i');
+
+        // Update the like count
+        likeCountSpan.innerText = `${response.data.likeCount} Likes`;
+
+        // Toggle the like icon's color
+        if (response.data.isLiked) {
+          likeIcon.classList.remove('ri-heart-line'); // Remove outline heart
+          likeIcon.classList.add('ri-heart-fill');
+          likeIcon.classList.add('text-red-600');
+        } else {
+          likeIcon.classList.remove('text-red-600');
+          likeIcon.classList.remove('ri-heart-fill'); // Remove filled heart
+          likeIcon.classList.add('ri-heart-line'); // Add outline heart
+        }
+
+        // Update the data attribute for future clicks
+        button.dataset.isLiked = !isLiked;
+      } else {
+        console.error('Failed to toggle like status');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+}
+ </script>
+  </div>
+  <% include ./partials/footer.ejs %>
+
+</body>
+</html>

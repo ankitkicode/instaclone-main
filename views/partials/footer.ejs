@@ -1,0 +1,36 @@
+<% if(footer){ %>
+    <div class="footer text-white flex justify-between items-center w-full fixed bottom-0 z-[10] bg-zinc-900 px-5 py-3">
+        <a href="/feed"><i class="text-[1.4rem] ri-home-line"></i></a>
+        <a href="/search"><i class="text-[1.4rem] ri-search-line"></i></a>
+        <a href="#"><i id="plus" class="text-[1.4rem] ri-add-box-line"></i></a>
+        <a href="/showReel"><i class="text-[1.4rem] ri-video-line"></i></i></a>
+        <a href="/profile">
+          <div class="w-6 h-6 bg-zinc-300 rounded-full overflow-hidden">
+            <img src="/images/uploads/<%= user.profilePicture %>" alt="" srcset="">
+          </div>
+        </a>
+        <div id="create" class="absolute bottom-40 w-screen left-20 h-2/3 text-lg hidden">
+          <div  class="z-10  bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-800 dark:divide-gray-700">
+            <ul class="py-2  text-gray-700 dark:text-gray-200" >
+              <li>
+                <a href="/upload" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Create Post</a>
+              </li>
+              <li>
+                <a href="/uploadVideo" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Create Reel</a>
+              </li>
+              <li>
+                <a href="/feed" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Back to Home</a>
+              </li>
+            </ul>
+            
+        </div>
+       
+      </div>
+<% } %>
+<script >
+  document.querySelector("#plus").addEventListener("click",function(){
+    document.querySelector("#create").classList.remove("hidden");
+      });
+</script>
+</body>
+</html>
